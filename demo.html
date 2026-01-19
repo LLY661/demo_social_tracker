@@ -3,105 +3,340 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Feed Research Prototype</title>
+    <title>Unified Feed Prototype (TikTok-Style)</title>
     <style>
-        /* This CSS handles the visual design (The Look) */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .feed-container { width: 100%; max-width: 500px; }
-        
-        /* The Card Design */
+        :root {
+            color-scheme: light;
+            --bg: #f6f6f6;
+            --card: #ffffff;
+            --text: #101014;
+            --muted: #6e7480;
+            --accent: #ff3b7c;
+            --soft: #f0f2f5;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            color: var(--text);
+        }
+
+        .feed-container {
+            width: min(92vw, 640px);
+            height: 100vh;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+        }
+
         .post-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            overflow: hidden;
-            border: 1px solid #ddd;
+            position: relative;
+            min-height: 100vh;
+            background: var(--card);
+            border-radius: 28px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            scroll-snap-align: start;
+            padding: 28px 24px 96px;
+            margin: 18px auto;
         }
-        
-        /* Post Header */
-        .post-header { padding: 12px; display: flex; align-items: center; }
-        .avatar { width: 40px; height: 40px; background-color: #ddd; border-radius: 50%; margin-right: 10px; }
-        .username { font-weight: bold; font-size: 14px; color: #333; }
-        .timestamp { font-size: 12px; color: #777; }
 
-        /* Content Types */
-        .post-content { width: 100%; }
-        .placeholder-video { 
-            width: 100%; height: 280px; background-color: #000; color: white; 
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .placeholder-image { width: 100%; height: 300px; background-color: #e4e6eb; }
-        .text-only { padding: 20px; font-size: 16px; line-height: 1.5; }
 
-        /* Action Bar */
-        .action-bar { padding: 10px; border-top: 1px solid #f0f0f0; display: flex; gap: 20px; }
-        .btn { border: none; background: none; cursor: pointer; color: #65676b; font-weight: 600; display: flex; align-items: center; gap: 5px; font-size: 14px;}
-        .btn:hover { background-color: #f2f2f2; border-radius: 4px; }
-        .btn.liked { color: #e0245e; } /* Red color when liked */
+        .avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #5563ff, #1bd5ff);
+            border-radius: 50%;
+        }
 
-        /* Developer Debug Console (Visualizing the data) */
+        .username {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .post-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .placeholder-video {
+            width: 100%;
+            height: 62vh;
+            border-radius: 22px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .placeholder-image {
+            width: 100%;
+            height: 62vh;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #5258ff, #ff5f6d);
+        }
+
+        .text-only {
+            width: 100%;
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--soft);
+            border-radius: 22px;
+            padding: 24px;
+        }
+
+        .post-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .action-rail {
+            position: absolute;
+            right: 16px;
+            bottom: 140px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            border: none;
+            background: var(--soft);
+            color: var(--text);
+            font-weight: 600;
+            padding: 10px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            min-width: 52px;
+        }
+
+        .btn.small {
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        .btn.liked {
+            background: var(--accent);
+        }
+
+        .icon {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+
+        .btn.liked .icon {
+            filter: brightness(0) invert(1);
+        }
+
+        .link-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #9dd4ff;
+            text-decoration: none;
+        }
+
+        .action-count {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
         #debug-console {
-            position: fixed; bottom: 10px; right: 10px; width: 300px; height: 200px;
-            background: rgba(0,0,0,0.85); color: #0f0; font-family: monospace; font-size: 11px;
-            padding: 10px; overflow-y: scroll; border-radius: 5px; z-index: 999;
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            width: 240px;
+            height: 140px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #7dff7a;
+            font-family: monospace;
+            font-size: 11px;
+            padding: 12px;
+            overflow-y: auto;
+            border-radius: 8px;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
-
 <div class="feed-container">
-    
-    <div class="post-card" id="post_001" data-type="video">
+    <section class="post-card" id="post_0001" data-type="video" data-url="https://example.com/posts/0001">
         <div class="post-header">
             <div class="avatar"></div>
             <div>
                 <div class="username">Research Project</div>
-                <div class="timestamp">Just now</div>
+                <div class="timestamp">Just now · Video</div>
             </div>
         </div>
         <div class="post-content">
-            <div class="placeholder-video" onclick="simulatePlay(this)">
-                ▶ Click to Simulate "Play Video"
-            </div>
+            <div class="placeholder-video" onclick="toggleVideo(this, 'post_0001')">▶ Tap to play demo video</div>
         </div>
-        <div class="action-bar">
-            <button class="btn" onclick="toggleLike(this, 'post_001')">♡ Like</button>
-            <button class="btn">Comment</button>
+        <div class="post-footer">
+            <div>Prototype: track play, pause, dwell time, and engagement actions.</div>
+            <a class="link-tag" href="https://example.com/posts/0001" onclick="trackEmbedLink('post_0001')">
+                🔗 example.com/posts/0001
+            </a>
         </div>
-    </div>
+        <div class="action-rail">
+            <button class="btn" onclick="toggleLike(this, 'post_0001')">
+                <img class="icon" src="icons/like.svg" alt="Like">
+            </button>
+            <span class="action-count" id="like-count-post_0001">246</span>
+            <button class="btn" onclick="trackComment('post_0001')">
+                <img class="icon" src="icons/comment.svg" alt="Comment">
+            </button>
+            <span class="action-count" id="comment-count-post_0001">23</span>
+            <button class="btn" onclick="trackRepost('post_0001')">
+                <img class="icon" src="icons/share.svg" alt="Share">
+            </button>
+            <span class="action-count" id="repost-count-post_0001">54</span>
+            <button class="btn" onclick="toggleBookmark(this, 'post_0001')">
+                <img class="icon" src="icons/bookmark.svg" alt="Bookmark">
+            </button>
+            <span class="action-count" id="bookmark-count-post_0001">17</span>
+        </div>
+    </section>
 
-    <div class="post-card" id="post_002" data-type="text">
+    <section class="post-card" id="post_0002" data-type="text" data-url="https://example.com/posts/0002">
         <div class="post-header">
             <div class="avatar"></div>
             <div>
                 <div class="username">User Study</div>
-                <div class="timestamp">2 hrs ago</div>
+                <div class="timestamp">2 hrs ago · Text</div>
             </div>
         </div>
-        <div class="post-content text-only">
-            This is an example of a text-only entry. We need to track how long the user reads this specific block of text.
+        <div class="post-content">
+            <div class="text-only">
+                This is a text-only entry, like an X/Twitter or LinkedIn update. We track dwell time
+                and any actions such as like, comment, repost, or bookmark. The content can be replaced
+                with your real research posts (1,000–1,500 total entries).
+            </div>
         </div>
-        <div class="action-bar">
-            <button class="btn" onclick="toggleLike(this, 'post_002')">♡ Like</button>
+        <div class="post-footer">
+            <div>Tracking: dwell time + engagement actions.</div>
         </div>
-    </div>
+        <div class="action-rail">
+            <button class="btn" onclick="toggleLike(this, 'post_0002')">
+                <img class="icon" src="icons/like.svg" alt="Like">
+            </button>
+            <span class="action-count" id="like-count-post_0002">102</span>
+            <button class="btn" onclick="trackComment('post_0002')">
+                <img class="icon" src="icons/comment.svg" alt="Comment">
+            </button>
+            <span class="action-count" id="comment-count-post_0002">8</span>
+            <button class="btn" onclick="trackRepost('post_0002')">
+                <img class="icon" src="icons/share.svg" alt="Share">
+            </button>
+            <span class="action-count" id="repost-count-post_0002">12</span>
+            <button class="btn" onclick="toggleBookmark(this, 'post_0002')">
+                <img class="icon" src="icons/bookmark.svg" alt="Bookmark">
+            </button>
+            <span class="action-count" id="bookmark-count-post_0002">4</span>
+        </div>
+    </section>
 
-    <div class="post-card" id="post_003" data-type="image">
+    <section class="post-card" id="post_0003" data-type="image" data-url="https://example.com/posts/0003">
         <div class="post-header">
             <div class="avatar"></div>
             <div>
                 <div class="username">Visual Data</div>
-                <div class="timestamp">5 hrs ago</div>
+                <div class="timestamp">5 hrs ago · Photo</div>
             </div>
         </div>
         <div class="post-content">
-            <div class="placeholder-image"></div> </div>
-        <div class="action-bar">
-            <button class="btn" onclick="toggleLike(this, 'post_003')">♡ Like</button>
+            <div class="placeholder-image" onclick="trackEmbedImage('post_0003')"></div>
         </div>
-    </div>
+        <div class="post-footer">
+            <div>Tap image to log embed-image clicks.</div>
+        </div>
+        <div class="action-rail">
+            <button class="btn" onclick="toggleLike(this, 'post_0003')">
+                <img class="icon" src="icons/like.svg" alt="Like">
+            </button>
+            <span class="action-count" id="like-count-post_0003">88</span>
+            <button class="btn" onclick="trackComment('post_0003')">
+                <img class="icon" src="icons/comment.svg" alt="Comment">
+            </button>
+            <span class="action-count" id="comment-count-post_0003">5</span>
+            <button class="btn" onclick="trackRepost('post_0003')">
+                <img class="icon" src="icons/share.svg" alt="Share">
+            </button>
+            <span class="action-count" id="repost-count-post_0003">9</span>
+            <button class="btn" onclick="toggleBookmark(this, 'post_0003')">
+                <img class="icon" src="icons/bookmark.svg" alt="Bookmark">
+            </button>
+            <span class="action-count" id="bookmark-count-post_0003">6</span>
+        </div>
+    </section>
 
+    <section class="post-card" id="post_0004" data-type="video" data-url="https://example.com/posts/0004">
+        <div class="post-header">
+            <div class="avatar"></div>
+            <div>
+                <div class="username">Creator Lab</div>
+                <div class="timestamp">Yesterday · Video</div>
+            </div>
+        </div>
+        <div class="post-content">
+            <div class="placeholder-video" onclick="toggleVideo(this, 'post_0004')">▶ Tap to play demo video</div>
+        </div>
+        <div class="post-footer">
+            <div>Video tracking: watch time + watch count.</div>
+            <a class="link-tag" href="https://example.com/posts/0004" onclick="trackEmbedLink('post_0004')">
+                🔗 example.com/posts/0004
+            </a>
+        </div>
+        <div class="action-rail">
+            <button class="btn" onclick="toggleLike(this, 'post_0004')">
+                <img class="icon" src="icons/like.svg" alt="Like">
+            </button>
+            <span class="action-count" id="like-count-post_0004">311</span>
+            <button class="btn" onclick="trackComment('post_0004')">
+                <img class="icon" src="icons/comment.svg" alt="Comment">
+            </button>
+            <span class="action-count" id="comment-count-post_0004">41</span>
+            <button class="btn" onclick="trackRepost('post_0004')">
+                <img class="icon" src="icons/share.svg" alt="Share">
+            </button>
+            <span class="action-count" id="repost-count-post_0004">67</span>
+            <button class="btn" onclick="toggleBookmark(this, 'post_0004')">
+                <img class="icon" src="icons/bookmark.svg" alt="Bookmark">
+            </button>
+            <span class="action-count" id="bookmark-count-post_0004">22</span>
+        </div>
+    </section>
 </div>
 
 <div id="debug-console">
@@ -110,60 +345,163 @@
 </div>
 
 <script>
-    // --- THIS SCRIPT SHOWS DEVELOPERS THE LOGIC YOU NEED ---
+    const userActions = {
+        posts: {}
+    };
+    let activePostId = null;
 
-    function logEvent(message) {
+    function getPostState(postId) {
+        if (!userActions.posts[postId]) {
+            const postElement = document.getElementById(postId);
+            userActions.posts[postId] = {
+                post_id: postId,
+                post_url: postElement.dataset.url,
+                event_time_utc: null,
+                dwell_time_ms: 0,
+                liked: false,
+                commented: false,
+                comment_text: null,
+                reposted: false,
+                bookmarked: false,
+                clicked_embed_link: false,
+                clicked_embed_image: false,
+                video_watch_time_ms: 0,
+                video_watch_count: 0,
+                videoPlaying: false,
+                videoStart: null
+            };
+        }
+        return userActions.posts[postId];
+    }
+
+    function logEvent(message, postId) {
         const consoleDiv = document.getElementById('debug-console');
         const time = new Date().toLocaleTimeString();
         consoleDiv.innerHTML += `[${time}] ${message}<br>`;
-        consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto scroll
+        consoleDiv.scrollTop = consoleDiv.scrollHeight;
     }
 
-    // 1. Like Button Logic
+    function updateEventTime(postId) {
+        const state = getPostState(postId);
+        state.event_time_utc = new Date().toISOString();
+    }
+
     function toggleLike(btn, postId) {
+        const state = getPostState(postId);
         btn.classList.toggle('liked');
-        if (btn.classList.contains('liked')) {
-            btn.innerHTML = '♥ Liked';
-            logEvent(`ACTION: User LIKED ${postId}`);
-        } else {
-            btn.innerHTML = '♡ Like';
-            logEvent(`ACTION: User UNLIKED ${postId}`);
+        state.liked = btn.classList.contains('liked');
+        updateEventTime(postId);
+        logEvent(`ACTION: ${state.liked ? 'LIKED' : 'UNLIKED'} ${postId}`, postId);
+    }
+
+    function trackComment(postId) {
+        const state = getPostState(postId);
+        state.commented = true;
+        state.comment_text = state.comment_text || "Sample comment";
+        updateEventTime(postId);
+        logEvent(`ACTION: COMMENTED on ${postId}`, postId);
+    }
+
+    function trackRepost(postId) {
+        const state = getPostState(postId);
+        state.reposted = true;
+        updateEventTime(postId);
+        logEvent(`ACTION: REPOSTED ${postId}`, postId);
+    }
+
+    function toggleBookmark(btn, postId) {
+        const state = getPostState(postId);
+        state.bookmarked = !state.bookmarked;
+        btn.classList.toggle('liked');
+        updateEventTime(postId);
+        logEvent(`ACTION: ${state.bookmarked ? 'BOOKMARKED' : 'UNBOOKMARKED'} ${postId}`, postId);
+    }
+
+    function trackEmbedLink(postId) {
+        const state = getPostState(postId);
+        state.clicked_embed_link = true;
+        updateEventTime(postId);
+        logEvent(`ACTION: CLICKED EMBED LINK on ${postId}`, postId);
+    }
+
+    function trackEmbedImage(postId) {
+        const state = getPostState(postId);
+        state.clicked_embed_image = true;
+        updateEventTime(postId);
+        logEvent(`ACTION: CLICKED EMBED IMAGE on ${postId}`, postId);
+    }
+
+    function finalizeVideoWatch(postId) {
+        const state = getPostState(postId);
+        if (state.videoPlaying && state.videoStart) {
+            state.video_watch_time_ms += Date.now() - state.videoStart;
+            state.videoPlaying = false;
+            state.videoStart = null;
         }
     }
 
-    // 2. Video Play Logic
-    function simulatePlay(element) {
-        element.style.backgroundColor = '#222';
-        element.innerHTML = "Playing... (Tracking 'Play' event)";
-        logEvent(`VIDEO: User pressed PLAY on video`);
+    function toggleVideo(element, postId) {
+        const state = getPostState(postId);
+        if (!state.videoPlaying) {
+            state.videoPlaying = true;
+            state.videoStart = Date.now();
+            state.video_watch_count += 1;
+            element.textContent = '⏸ Playing... Tap to pause';
+            element.style.backgroundColor = '#222';
+            updateEventTime(postId);
+            logEvent(`VIDEO: PLAY ${postId}`, postId);
+        } else {
+            finalizeVideoWatch(postId);
+            element.textContent = '▶ Tap to play demo video';
+            element.style.backgroundColor = '#000';
+            updateEventTime(postId);
+            logEvent(`VIDEO: PAUSE ${postId}`, postId);
+        }
     }
 
-    // 3. Time Spent / Visibility Logic (Intersection Observer)
-    // This tells the browser to watch when posts enter/leave the screen
-    let observerOptions = { threshold: 0.5 }; // Trigger when 50% of post is visible
+    const observerOptions = {
+        threshold: 0.85
+    };
 
-    let observer = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
+            const postId = entry.target.id;
+            const state = getPostState(postId);
             if (entry.isIntersecting) {
-                // Post entered screen
+                if (activePostId && activePostId !== postId) {
+                    const previous = document.getElementById(activePostId);
+                    const previousStart = previous?.getAttribute('data-entry-time');
+                    if (previousStart) {
+                        const duration = Date.now() - Number(previousStart);
+                        const previousState = getPostState(activePostId);
+                        previousState.dwell_time_ms += duration;
+                        finalizeVideoWatch(activePostId);
+                        updateEventTime(activePostId);
+                        logEvent(`VIEW: User finished ${activePostId} after ${duration}ms`, activePostId);
+                    }
+                }
+
+                activePostId = postId;
                 entry.target.setAttribute('data-entry-time', Date.now());
-                logEvent(`VIEW: ${entry.target.id} entered viewport (Timer Start)`);
-            } else {
-                // Post left screen
+                updateEventTime(postId);
+                logEvent(`VIEW: User is watching ${postId}`, postId);
+            } else if (activePostId === postId) {
                 const startTime = entry.target.getAttribute('data-entry-time');
                 if (startTime) {
-                    const duration = Date.now() - startTime;
-                    logEvent(`VIEW: ${entry.target.id} left viewport. DWELL TIME: ${duration}ms`);
+                    const duration = Date.now() - Number(startTime);
+                    state.dwell_time_ms += duration;
+                    finalizeVideoWatch(postId);
+                    updateEventTime(postId);
+                    logEvent(`VIEW: User left ${postId} after ${duration}ms`, postId);
                 }
+                activePostId = null;
             }
         });
     }, observerOptions);
 
-    // Attach observer to all posts
     document.querySelectorAll('.post-card').forEach(post => {
         observer.observe(post);
     });
-
 </script>
 </body>
 </html>
