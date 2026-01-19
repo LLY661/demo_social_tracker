@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Feed Research Prototype</title>
+    <style>
+        /* This CSS handles the visual design (The Look) */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .feed-container { width: 100%; max-width: 500px; }
+        
+        /* The Card Design */
+        .post-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        
+        /* Post Header */
+        .post-header { padding: 12px; display: flex; align-items: center; }
+        .avatar { width: 40px; height: 40px; background-color: #ddd; border-radius: 50%; margin-right: 10px; }
+        .username { font-weight: bold; font-size: 14px; color: #333; }
+        .timestamp { font-size: 12px; color: #777; }
+
+        /* Content Types */
+        .post-content { width: 100%; }
+        .placeholder-video { 
+            width: 100%; height: 280px; background-color: #000; color: white; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .placeholder-image { width: 100%; height: 300px; background-color: #e4e6eb; }
+        .text-only { padding: 20px; font-size: 16px; line-height: 1.5; }
+
+        /* Action Bar */
+        .action-bar { padding: 10px; border-top: 1px solid #f0f0f0; display: flex; gap: 20px; }
+        .btn { border: none; background: none; cursor: pointer; color: #65676b; font-weight: 600; display: flex; align-items: center; gap: 5px; font-size: 14px;}
+        .btn:hover { background-color: #f2f2f2; border-radius: 4px; }
+        .btn.liked { color: #e0245e; } /* Red color when liked */
+
+        /* Developer Debug Console (Visualizing the data) */
+        #debug-console {
+            position: fixed; bottom: 10px; right: 10px; width: 300px; height: 200px;
+            background: rgba(0,0,0,0.85); color: #0f0; font-family: monospace; font-size: 11px;
+            padding: 10px; overflow-y: scroll; border-radius: 5px; z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+<div class="feed-container">
+    
+    <div class="post-card" id="post_001" data-type="video">
+        <div class="post-header">
+            <div class="avatar"></div>
+            <div>
+                <div class="username">Research Project</div>
+                <div class="timestamp">Just now</div>
+            </div>
+        </div>
+        <div class="post-content">
+            <div class="placeholder-video" onclick="simulatePlay(this)">
+                ▶ Click to Simulate "Play Video"
+            </div>
+        </div>
+        <div class="action-bar">
+            <button class="btn" onclick="toggleLike(this, 'post_001')">♡ Like</button>
+            <button class="btn">Comment</button>
+        </div>
+    </div>
+
+    <div class="post-card" id="post_002" data-type="text">
+        <div class="post-header">
+            <div class="avatar"></div>
+            <div>
+                <div class="username">User Study</div>
+                <div class="timestamp">2 hrs ago</div>
+            </div>
+        </div>
+        <div class="post-content text-only">
+            This is an example of a text-only entry. We need to track how long the user reads this specific block of text.
+        </div>
+        <div class="action-bar">
+            <button class="btn" onclick="toggleLike(this, 'post_002')">♡ Like</button>
+        </div>
+    </div>
+
+    <div class="post-card" id="post_003" data-type="image">
+        <div class="post-header">
+            <div class="avatar"></div>
+            <div>
+                <div class="username">Visual Data</div>
+                <div class="timestamp">5 hrs ago</div>
+            </div>
+        </div>
+        <div class="post-content">
+            <div class="placeholder-image"></div> </div>
+        <div class="action-bar">
+            <button class="btn" onclick="toggleLike(this, 'post_003')">♡ Like</button>
+        </div>
+    </div>
+
+</div>
+
+<div id="debug-console">
+    <strong>DATA LOG (Show this to developers):</strong><br>
+    --- awaiting interaction ---<br>
+</div>
+
+<script>
+    // --- THIS SCRIPT SHOWS DEVELOPERS THE LOGIC YOU NEED ---
+
+    function logEvent(message) {
+        const consoleDiv = document.getElementById('debug-console');
+        const time = new Date().toLocaleTimeString();
+        consoleDiv.innerHTML += `[${time}] ${message}<br>`;
+        consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto scroll
+    }
+
+    // 1. Like Button Logic
+    function toggleLike(btn, postId) {
+        btn.classList.toggle('liked');
+        if (btn.classList.contains('liked')) {
+            btn.innerHTML = '♥ Liked';
+            logEvent(`ACTION: User LIKED ${postId}`);
+        } else {
+            btn.innerHTML = '♡ Like';
+            logEvent(`ACTION: User UNLIKED ${postId}`);
+        }
+    }
+
+    // 2. Video Play Logic
+    function simulatePlay(element) {
+        element.style.backgroundColor = '#222';
+        element.innerHTML = "Playing... (Tracking 'Play' event)";
+        logEvent(`VIDEO: User pressed PLAY on video`);
+    }
+
+    // 3. Time Spent / Visibility Logic (Intersection Observer)
+    // This tells the browser to watch when posts enter/leave the screen
+    let observerOptions = { threshold: 0.5 }; // Trigger when 50% of post is visible
+
+    let observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Post entered screen
+                entry.target.setAttribute('data-entry-time', Date.now());
+                logEvent(`VIEW: ${entry.target.id} entered viewport (Timer Start)`);
+            } else {
+                // Post left screen
+                const startTime = entry.target.getAttribute('data-entry-time');
+                if (startTime) {
+                    const duration = Date.now() - startTime;
+                    logEvent(`VIEW: ${entry.target.id} left viewport. DWELL TIME: ${duration}ms`);
+                }
+            }
+        });
+    }, observerOptions);
+
+    // Attach observer to all posts
+    document.querySelectorAll('.post-card').forEach(post => {
+        observer.observe(post);
+    });
+
+</script>
+</body>
+</html>
