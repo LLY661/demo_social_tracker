@@ -150,6 +150,16 @@
             background: var(--accent);
         }
 
+        .icon {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+
+        .btn.liked .icon {
+            filter: brightness(0) invert(1);
+        }
+
         .link-tag {
             display: inline-flex;
             align-items: center;
@@ -167,8 +177,8 @@
             position: fixed;
             bottom: 16px;
             left: 16px;
-            width: 340px;
-            height: 220px;
+            width: 240px;
+            height: 140px;
             background: rgba(0, 0, 0, 0.85);
             color: #7dff7a;
             font-family: monospace;
@@ -200,13 +210,21 @@
             </a>
         </div>
         <div class="action-rail">
-            <button class="btn" onclick="toggleLike(this, 'post_0001')">♡</button>
+            <button class="btn" onclick="toggleLike(this, 'post_0001')">
+                <img class="icon" src="icons/like.svg" alt="Like">
+            </button>
             <span class="action-count" id="like-count-post_0001">246</span>
-            <button class="btn" onclick="trackComment('post_0001')">💬</button>
+            <button class="btn" onclick="trackComment('post_0001')">
+                <img class="icon" src="icons/comment.svg" alt="Comment">
+            </button>
             <span class="action-count" id="comment-count-post_0001">23</span>
-            <button class="btn" onclick="trackRepost('post_0001')">🔁</button>
+            <button class="btn" onclick="trackRepost('post_0001')">
+                <img class="icon" src="icons/share.svg" alt="Share">
+            </button>
             <span class="action-count" id="repost-count-post_0001">54</span>
-            <button class="btn" onclick="toggleBookmark(this, 'post_0001')">🔖</button>
+            <button class="btn" onclick="toggleBookmark(this, 'post_0001')">
+                <img class="icon" src="icons/bookmark.svg" alt="Bookmark">
+            </button>
             <span class="action-count" id="bookmark-count-post_0001">17</span>
         </div>
     </section>
@@ -230,13 +248,21 @@
             <div>Tracking: dwell time + engagement actions.</div>
         </div>
         <div class="action-rail">
-            <button class="btn" onclick="toggleLike(this, 'post_0002')">♡</button>
+            <button class="btn" onclick="toggleLike(this, 'post_0002')">
+                <img class="icon" src="icons/like.svg" alt="Like">
+            </button>
             <span class="action-count" id="like-count-post_0002">102</span>
-            <button class="btn" onclick="trackComment('post_0002')">💬</button>
+            <button class="btn" onclick="trackComment('post_0002')">
+                <img class="icon" src="icons/comment.svg" alt="Comment">
+            </button>
             <span class="action-count" id="comment-count-post_0002">8</span>
-            <button class="btn" onclick="trackRepost('post_0002')">🔁</button>
+            <button class="btn" onclick="trackRepost('post_0002')">
+                <img class="icon" src="icons/share.svg" alt="Share">
+            </button>
             <span class="action-count" id="repost-count-post_0002">12</span>
-            <button class="btn" onclick="toggleBookmark(this, 'post_0002')">🔖</button>
+            <button class="btn" onclick="toggleBookmark(this, 'post_0002')">
+                <img class="icon" src="icons/bookmark.svg" alt="Bookmark">
+            </button>
             <span class="action-count" id="bookmark-count-post_0002">4</span>
         </div>
     </section>
@@ -256,13 +282,21 @@
             <div>Tap image to log embed-image clicks.</div>
         </div>
         <div class="action-rail">
-            <button class="btn" onclick="toggleLike(this, 'post_0003')">♡</button>
+            <button class="btn" onclick="toggleLike(this, 'post_0003')">
+                <img class="icon" src="icons/like.svg" alt="Like">
+            </button>
             <span class="action-count" id="like-count-post_0003">88</span>
-            <button class="btn" onclick="trackComment('post_0003')">💬</button>
+            <button class="btn" onclick="trackComment('post_0003')">
+                <img class="icon" src="icons/comment.svg" alt="Comment">
+            </button>
             <span class="action-count" id="comment-count-post_0003">5</span>
-            <button class="btn" onclick="trackRepost('post_0003')">🔁</button>
+            <button class="btn" onclick="trackRepost('post_0003')">
+                <img class="icon" src="icons/share.svg" alt="Share">
+            </button>
             <span class="action-count" id="repost-count-post_0003">9</span>
-            <button class="btn" onclick="toggleBookmark(this, 'post_0003')">🔖</button>
+            <button class="btn" onclick="toggleBookmark(this, 'post_0003')">
+                <img class="icon" src="icons/bookmark.svg" alt="Bookmark">
+            </button>
             <span class="action-count" id="bookmark-count-post_0003">6</span>
         </div>
     </section>
@@ -285,13 +319,21 @@
             </a>
         </div>
         <div class="action-rail">
-            <button class="btn" onclick="toggleLike(this, 'post_0004')">♡</button>
+            <button class="btn" onclick="toggleLike(this, 'post_0004')">
+                <img class="icon" src="icons/like.svg" alt="Like">
+            </button>
             <span class="action-count" id="like-count-post_0004">311</span>
-            <button class="btn" onclick="trackComment('post_0004')">💬</button>
+            <button class="btn" onclick="trackComment('post_0004')">
+                <img class="icon" src="icons/comment.svg" alt="Comment">
+            </button>
             <span class="action-count" id="comment-count-post_0004">41</span>
-            <button class="btn" onclick="trackRepost('post_0004')">🔁</button>
+            <button class="btn" onclick="trackRepost('post_0004')">
+                <img class="icon" src="icons/share.svg" alt="Share">
+            </button>
             <span class="action-count" id="repost-count-post_0004">67</span>
-            <button class="btn" onclick="toggleBookmark(this, 'post_0004')">🔖</button>
+            <button class="btn" onclick="toggleBookmark(this, 'post_0004')">
+                <img class="icon" src="icons/bookmark.svg" alt="Bookmark">
+            </button>
             <span class="action-count" id="bookmark-count-post_0004">22</span>
         </div>
     </section>
@@ -336,10 +378,6 @@
         const consoleDiv = document.getElementById('debug-console');
         const time = new Date().toLocaleTimeString();
         consoleDiv.innerHTML += `[${time}] ${message}<br>`;
-        if (postId) {
-            const snapshot = JSON.stringify(getPostState(postId), null, 2);
-            consoleDiv.innerHTML += `<pre>${snapshot}</pre>`;
-        }
         consoleDiv.scrollTop = consoleDiv.scrollHeight;
     }
 
